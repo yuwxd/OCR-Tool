@@ -1,0 +1,113 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build binary (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact: ocr-linux-x64
+            binary: dist/ocr
+          - os: windows-latest
+            artifact: ocr-windows-x64
+            binary: dist/ocr.exe
+          - os: macos-latest
+            artifact: ocr-macos-x64
+            binary: dist/ocr
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install Tesseract (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y tesseract-ocr
+
+      - name: Install Tesseract (macOS)
+        if: runner.os == 'macOS'
+        run: brew install tesseract
+
+      - name: Install Tesseract (Windows)
+        if: runner.os == 'Windows'
+        run: choco install tesseract --no-progress -y
+        shell: pwsh
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pyinstaller
+
+      - name: Build binary
+        run: |
+          pyinstaller \
+            --onefile \
+            --name ocr \
+            --clean \
+            --hidden-import=pytesseract \
+            --hidden-import=cv2 \
+            --hidden-import=PIL \
+            main.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.binary }}
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Rename artifacts
+        run: |
+          mv artifacts/ocr-linux-x64/ocr   artifacts/ocr-linux-x64
+          mv artifacts/ocr-windows-x64/ocr.exe artifacts/ocr-windows-x64.exe
+          mv artifacts/ocr-macos-x64/ocr   artifacts/ocr-macos-x64
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "OCR Tool ${{ github.ref_name }}"
+          body: |
+            ## OCR Tool ${{ github.ref_name }}
+
+            ### Download
+
+            | Platform | File |
+            |----------|------|
+            | Linux x64 | `ocr-linux-x64` |
+            | Windows x64 | `ocr-windows-x64.exe` |
+            | macOS x64 | `ocr-macos-x64` |
+
+            **Tesseract must still be installed separately.**  
+            See [README](https://github.com/o9q/ocr-tool#quick-start) for setup instructions.
+          files: |
+            artifacts/ocr-linux-x64
+            artifacts/ocr-windows-x64.exe
+            artifacts/ocr-macos-x64
+          draft: false
+          prerelease: false
