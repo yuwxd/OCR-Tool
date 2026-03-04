@@ -1,18 +1,3 @@
-"""
-Typer-based CLI for OCR Tool.
-
-Supports:
-  - Single file               ocr image.png
-  - Multiple files            ocr img1.png img2.jpg
-  - Drag-and-drop (any OS)    drag file onto binary / terminal
-  - Batch directory           ocr --dir ./screenshots/
-  - JSON export               ocr image.png --format json
-  - Clipboard copy            ocr image.png --clipboard
-  - Language selection        ocr image.png --lang pol
-  - Debug/verbose mode        ocr image.png --debug
-  - EasyOCR fallback          ocr image.png --easyocr
-"""
-
 from __future__ import annotations
 
 import logging
@@ -233,21 +218,6 @@ def main(
         typer.Option("--version", "-v", callback=_version_callback, is_eager=True),
     ] = None,
 ) -> None:
-    """
-    Extract text from images using multi-pass OCR.
-
-    Examples:
-
-      ocr screenshot.png
-
-      ocr *.png --format txt
-
-      ocr receipt.jpg --lang pol --clipboard
-
-      ocr --dir ./scans/ --recursive --format json
-
-      ocr photo.jpg --debug --easyocr
-    """
     _setup_logging(debug)
     print_banner()
 

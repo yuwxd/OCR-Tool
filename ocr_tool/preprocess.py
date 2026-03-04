@@ -1,11 +1,3 @@
-"""
-Image preprocessing pipeline for maximum OCR accuracy.
-
-Multi-pass approach: each image is processed into multiple variants
-(binarized, adaptive, enhanced, morphological) and the OCR engine
-picks the best result from each pass.
-"""
-
 import os
 import logging
 import cv2
@@ -25,10 +17,6 @@ MAX_UPSCALE = 4.0
 
 
 def load_image(path: str) -> np.ndarray:
-    """
-    Load image from disk, supporting all major formats.
-    Handles drag-and-drop paths (quoted strings).
-    """
     path = path.strip('"').strip("'").strip()
 
     if not os.path.isfile(path):
@@ -123,12 +111,6 @@ def _deskew(gray: np.ndarray) -> np.ndarray:
 
 
 def build_variants(image: np.ndarray, debug: bool = False) -> list[tuple[str, np.ndarray]]:
-    """
-    Build multiple preprocessed variants of the image.
-    The OCR engine will test each and select the best result.
-
-    Returns list of (name, grayscale_ndarray) tuples.
-    """
     gray = _to_gray(image)
     gray, _ = _smart_upscale(gray, debug=debug)
     gray = _deskew(gray)

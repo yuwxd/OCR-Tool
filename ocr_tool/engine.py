@@ -1,16 +1,3 @@
-"""
-OCR engine layer.
-
-Primary engine:  Tesseract via pytesseract (multi-pass, multi-PSM)
-Optional engine: EasyOCR (deep-learning, better on complex/curved text)
-
-Strategy:
-  1. Run Tesseract with multiple PSM modes across all preprocessed variants.
-  2. Score each result (confidence × word_count weighting).
-  3. If EasyOCR is installed and Tesseract confidence is low, use EasyOCR as fallback.
-  4. Return the OCRResult with the highest composite score.
-"""
-
 from __future__ import annotations
 
 import logging
@@ -118,9 +105,6 @@ def run_tesseract_multipass(
     psm_modes: Optional[list[int]] = None,
     debug: bool = False,
 ) -> OCRResult:
-    """
-    Run Tesseract across all (variant, PSM) combinations and return the best result.
-    """
     if psm_modes is None:
         psm_modes = list(PSM_MODES.keys())
 
@@ -140,10 +124,6 @@ def run_easyocr(
     lang: str = "en",
     debug: bool = False,
 ) -> Optional[OCRResult]:
-    """
-    EasyOCR fallback — only used if easyocr is installed.
-    Returns None if not available.
-    """
     try:
         import easyocr
     except ImportError:
@@ -190,10 +170,6 @@ def extract(
     use_easyocr: bool = False,
     debug: bool = False,
 ) -> OCRResult:
-    """
-    Main extraction entry point.
-    Runs Tesseract multi-pass; optionally uses EasyOCR as fallback or override.
-    """
     tess_result = run_tesseract_multipass(variants, lang=lang, psm_modes=psm_modes, debug=debug)
 
     if use_easyocr:

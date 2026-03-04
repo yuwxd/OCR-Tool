@@ -1,5 +1,3 @@
-"""Tests for OCR engine dataclasses and scoring."""
-
 from ocr_tool.engine import OCRResult
 
 

@@ -1,8 +1,3 @@
-"""
-Output formatting and display utilities.
-Handles terminal rendering, file writing, and JSON export.
-"""
-
 from __future__ import annotations
 
 import json

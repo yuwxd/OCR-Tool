@@ -1,5 +1,3 @@
-"""Tests for the preprocessing pipeline."""
-
 import numpy as np
 import pytest
 

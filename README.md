@@ -1,7 +1,7 @@
 # OCR Tool
 
-[![CI](https://github.com/o9q/ocr-tool/actions/workflows/ci.yml/badge.svg)](https://github.com/o9q/ocr-tool/actions/workflows/ci.yml)
-[![Release](https://github.com/o9q/ocr-tool/actions/workflows/release.yml/badge.svg)](https://github.com/o9q/ocr-tool/actions/workflows/release.yml)
+[![CI](https://github.com/yuwxd/OCR-Tool/actions/workflows/ci.yml/badge.svg)](https://github.com/yuwxd/OCR-Tool/actions/workflows/ci.yml)
+[![Release](https://github.com/yuwxd/OCR-Tool/actions/workflows/release.yml/badge.svg)](https://github.com/yuwxd/OCR-Tool/actions/workflows/release.yml)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
